@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -10,14 +10,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { UserValidation } from '@/lib/validations/user';
-import Image from 'next/image';
-import { ChangeEvent, useState } from 'react';
-import { Textarea } from '../ui/textarea';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { UserValidation } from "@/lib/validations/user";
+import Image from "next/image";
+import { ChangeEvent, useState } from "react";
+import { Textarea } from "../ui/textarea";
+import { isBase64Image } from "@/lib/utils";
 
 interface Props {
   user: {
@@ -37,10 +38,10 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
   const form = useForm({
     resolver: zodResolver(UserValidation),
     defaultValues: {
-      profile_photo: user?.image || '',
-      name: user?.name || '',
-      username: user?.username || '',
-      bio: user?.bio || '',
+      profile_photo: user?.image || "",
+      name: user?.name || "",
+      username: user?.username || "",
+      bio: user?.bio || "",
     },
   });
 
@@ -55,10 +56,10 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       const file = e.target.files[0];
 
       setFiles(Array.from(e.target.files));
-      if (!file.type.includes('image')) return;
+      if (!file.type.includes("image")) return;
 
       fileReader.onload = async (event) => {
-        const imageDataUrl = event.target?.result?.toString() || '';
+        const imageDataUrl = event.target?.result?.toString() || "";
         fieldChange(imageDataUrl);
       };
       fileReader.readAsDataURL(file);
@@ -66,9 +67,8 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
   };
 
   function onSubmit(values: z.infer<typeof UserValidation>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    const blob = values.profile_photo;
+    const hasImageChanged = isBase64Image(blob);
   }
 
   return (
