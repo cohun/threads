@@ -1,8 +1,8 @@
-'use server';
+"use server";
 
-import { revalidatePath } from 'next/cache';
-import User from '../models/user.model';
-import { connectToDB } from '../mongoose';
+import { revalidatePath } from "next/cache";
+import User from "../models/user.model";
+import { connectToDB } from "../mongoose";
 
 interface Params {
   userId: string;
@@ -15,22 +15,28 @@ interface Params {
 
 export async function updateUser({
   userId,
-  username,
-  name,
   bio,
-  image,
+  name,
   path,
+  username,
+  image,
 }: Params): Promise<void> {
-  connectToDB();
-
   try {
+    connectToDB();
+
     await User.findOneAndUpdate(
       { id: userId },
-      { username: username.toLowerCase(), name, bio, image, onboarded: true },
+      {
+        username: username.toLowerCase(),
+        name,
+        bio,
+        image,
+        onboarded: true,
+      },
       { upsert: true }
     );
 
-    if (path === '/profile/edit') {
+    if (path === "/profile/edit") {
       revalidatePath(path);
     }
   } catch (error: any) {
